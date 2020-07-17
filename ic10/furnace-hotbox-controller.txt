@@ -1,0 +1,48 @@
+# Purpose(s): 
+# - Regulates the temperature in a "hotbox" furnace by reading a gas sensor in the hotbox and toggling wall heaters
+# - Displays temperature and pressure on LED Displays
+
+alias gas d0 # gas sensor in the hotbox
+alias ledTemp d1 # LED Display showing temperature
+alias ledPres d2 # LED Display showing pressure
+alias valveOut d3 # Drain valve on furnace gasses
+alias heaters d4 # Logic Memory connected to batch writer that toggles wall heaters on/off
+alias furnace d5 # Furnace connected to hotbox
+
+alias pres r1
+alias temp r2
+
+define maxTemp 750
+
+s ledTemp Mode 0
+s ledTemp Color 2
+s ledPres Mode 0
+s ledPres Color 1
+s valveOut On 0
+s heaters Setting 0
+
+loop:
+jal updateDisplays
+jal regulateChamber
+
+yield
+s heaters Setting 0
+j loop
+
+updateDisplays:
+l temp gas Temperature
+#sub r15 temp 273.15
+s ledTemp Setting temp
+l pres gas Pressure
+s ledPres Setting pres
+
+j ra
+
+regulateChamber:
+slt r15 temp maxTemp
+s heaters Setting r15
+
+mul r14 r15 4
+s ledTemp Color r14
+
+j ra

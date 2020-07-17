@@ -1,0 +1,66 @@
+# Purpose(s):
+# - Auto plant and harvest from two advanced hydroponics devices
+# - Regulates room CO2 levels using a digital valve and gas sensor
+
+alias plant1 d0 # Advanced hydroponics 1
+alias plant2 d1 # Advanced hydroponics 2
+alias gas d2 # Gas sensor in room
+alias co2Valve d3 # Valve for adding CO2 to room
+
+define MAX_CO2 1.2
+define MIN_CO2 0.9
+
+loop:
+jal processPlants
+jal checkCO2
+
+yield
+j loop
+
+processPlants:
+# Plant 1
+s plant1 Plant 0
+ls r0 plant1 0 Occupied
+breq r0 1 2
+s plant1 Plant 1
+
+s plant1 Harvest 0
+ls r0 plant1 0 Mature
+breq r0 0 2
+s plant1 Harvest 1
+
+# Plant 2
+s plant2 Plant 0
+ls r0 plant2 0 Occupied
+breq r0 1 2
+s plant2 Plant 1
+
+s plant2 Harvest 0
+ls r0 plant2 0 Mature
+breq r0 0 2
+s plant2 Harvest 1
+
+j ra
+
+checkCO2:
+l r0 gas RatioCarbonDioxide
+mul r0 r0 100
+
+# If CO2 < 1, then Open CO2 Valve
+bgt r0 MAX_CO2 co2Close
+blt r0 MIN_CO2 co2Open
+j co2End
+
+co2Open:
+s co2Valve On 1
+sleep 0.1
+s co2Valve On 0
+j co2End
+
+co2Close:
+s co2Valve On 0
+j co2End
+
+co2End:
+
+j ra
