@@ -1,0 +1,55 @@
+alias furnace d0
+alias memTargetPres d1
+alias memTargetTemp d2
+alias valveInlet d3
+alias valveOutlet d4
+alias memHeaterEnable d5
+
+alias targetPres r0
+alias targetTemp r1
+alias curPres r2
+alias curTemp r3
+
+define TOLERANCE_UPPER 1.01
+define TOLERANCE_LOWER 0.99
+
+# Init
+#s furnace On 0
+s valveInlet On 0
+s valveOutlet On 0
+s memHeaterEnable Setting 0
+
+loop:
+l curPres furnace Pressure
+l curTemp furnace Temperature
+l targetPres memTargetPres Setting
+l targetTemp memTargetTemp Setting
+jal regulateTemp
+jal regulatePressure
+
+yield
+j loop
+
+regulateTemp:
+# Enable heaters if curTemp < targetTemp
+#mul r14 targetTemp TOLERANCE_UPPER
+slt r15 curTemp targetTemp
+s memHeaterEnable Setting r15
+
+j ra
+
+regulatePressure:
+# Enable Inlet if curPres < targetPres
+mul r14 targetPres TOLERANCE_LOWER
+slt r15 curPres r14
+s valveInlet On r15
+
+# Enable Outlet if curPres > targetPres
+mul r14 targetPres TOLERANCE_UPPER
+sgt r15 curPres r14
+s valveOutlet On r15
+
+j ra
+
+
+

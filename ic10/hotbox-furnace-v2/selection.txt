@@ -1,0 +1,103 @@
+alias dialSel d0
+alias buttonSel d1
+alias memTargetPres d2
+alias memTargetTemp d3
+alias ledTargetPres d4
+alias ledTargetTemp d5
+
+alias curTargetPres r0
+alias curTargetTemp r1
+alias newTargetPres r2
+alias newTargetTemp r3
+alias selectionNum r4
+alias flickerCounter r5
+alias flickerToggle r6
+alias unsaved r7
+
+define presTarget0 0
+define tempTarget0 0
+define presTarget1 500
+define tempTarget1 500
+define presTarget2 750
+define tempTarget2 750
+define presTarget3 1000
+define tempTarget3 750
+define presTarget4 6000
+define tempTarget4 1300
+
+# Init
+s memTargetPres Setting 0
+s memTargetTemp Setting 0
+s ledTargetPres Mode 0
+s ledTargetTemp Mode 0
+s ledTargetPres Color 0
+s ledTargetTemp Color 0
+move flickerCounter 0
+move flickerToggle 0
+
+loop:
+l curTargetPres memTargetPres Setting
+l curTargetTemp memTargetTemp Setting
+jal translateDial
+jal flicker
+
+s ledTargetPres Setting newTargetPres
+s ledTargetTemp Setting newTargetTemp
+
+l r15 buttonSel Setting
+breqz r15 3
+s memTargetPres Setting newTargetPres
+s memTargetTemp Setting newTargetTemp
+
+yield
+j loop
+
+translateDial:
+l selectionNum dialSel Setting
+brne selectionNum 0 3
+move newTargetPres presTarget0
+move newTargetTemp tempTarget0
+brne selectionNum 1 3
+move newTargetPres presTarget1
+move newTargetTemp tempTarget1
+brne selectionNum 2 3
+move newTargetPres presTarget2
+move newTargetTemp tempTarget2
+brne selectionNum 3 3
+move newTargetPres presTarget3
+move newTargetTemp tempTarget3
+brne selectionNum 4 3
+move newTargetPres presTarget4
+move newTargetTemp tempTarget4
+
+j ra
+
+flicker:
+sne r14 newTargetPres curTargetPres
+sne r15 newTargetTemp curTargetTemp
+or unsaved r14 r15
+beqz unsaved flickerOff
+
+flickerOn:
+add flickerCounter flickerCounter 1
+brlt flickerCounter 1 3
+xor flickerToggle flickerToggle 1
+move flickerCounter 0
+j flickerDone
+
+flickerOff:
+move flickerToggle 0
+move flickerCounter 0
+
+flickerDone:
+breqz flickerToggle 3
+s ledTargetPres Color 5
+s ledTargetTemp Color 5
+brnez flickerToggle 3
+s ledTargetPres Color 1
+s ledTargetTemp Color 1
+
+j ra
+
+
+

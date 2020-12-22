@@ -1,0 +1,47 @@
+alias furnace d0
+alias memHeaterEnable d1
+alias valveInlet d2
+alias valveOutlet d3
+alias ledCurrentPres d4
+alias ledCurrentTemp d5
+
+alias curPres r0
+alias curTemp r1
+alias heating r2
+alias inletOpen r3
+alias outletOpen r4
+
+# Init
+s ledCurrentPres Mode 0
+s ledCurrentTemp Mode 0
+s ledCurrentPres Color 0
+s ledCurrentTemp Color 0
+
+loop:
+l curPres furnace Pressure
+l curTemp furnace Temperature
+l heating memHeaterEnable Setting
+l inletOpen valveInlet On
+l outletOpen valveOutlet On
+
+s ledCurrentPres Setting curPres
+# If Inlet Open, then Yellow
+breqz inletOpen 2
+s ledCurrentPres Color 5
+# If Outlet Open, then Blue
+breqz outletOpen 2
+s ledCurrentPres Color 0
+# If neither Inlet nor Outlet Open, then Gray
+or r15 inletOpen outletOpen
+xor r15 r15 1
+breqz r15 2
+s ledCurrentPres Color 1
+
+s ledCurrentTemp Setting curTemp
+breqz heating 2
+s ledCurrentTemp Color 4
+brnez heating 2
+s ledCurrentTemp Color 1
+
+yield
+j loop
