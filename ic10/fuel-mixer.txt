@@ -1,0 +1,74 @@
+alias filterO2 d0
+alias furnaceH2 d1
+alias tankO2 d2
+alias tankH2 d3
+alias tankFuel d4
+alias mixerFuel d5
+
+alias disable r15
+
+define MIN_KPA 1
+define MAX_KPA 20000
+
+# Setup
+s filterO2 On 0
+s furnaceH2 Open 0
+s furnaceH2 Activate 0
+s mixerFuel On 0
+s mixerFuel Setting 0.33
+
+#s filterO2 Lock 1
+s furnaceH2 Lock 1
+s mixerFuel Lock 1
+
+loop:
+jal _checkO2
+jal _checkH2
+jal _checkFuel
+
+yield
+j loop
+
+_checkO2:
+move disable 0
+
+l r0 tankO2 Pressure
+sgt r0 r0 MAX_KPA
+or disable disable r0
+
+seqz disable disable
+s filterO2 On disable
+
+j ra
+
+_checkH2:
+#move disable 0
+
+#l r0 tankH2 Pressure
+#sgt r0 r0 MAX_KPA
+#or disable disable r0
+
+#seqz disable disable
+#s furnaceH2 On disable
+
+j ra
+
+_checkFuel:
+move disable 0
+
+l r0 tankFuel Pressure
+sgt r0 r0 MAX_KPA
+or disable disable r0
+
+l r0 tankH2 Pressure
+slt r0 r0 MIN_KPA
+or disable disable r0
+
+l r0 tankO2 Pressure
+slt r0 r0 MIN_KPA
+or disable disable r0
+
+seqz disable disable
+s mixerFuel On disable
+
+j ra

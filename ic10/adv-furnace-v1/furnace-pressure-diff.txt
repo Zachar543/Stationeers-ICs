@@ -1,0 +1,27 @@
+alias advFurnace d0
+alias memPresMin d1
+alias memPresMax d2
+alias memPressureDiff d3
+
+alias curPressure r15
+alias minPressure r14
+alias maxPressure r13
+alias diffPressure r12
+
+loop:
+
+l curPressure advFurnace Pressure
+l minPressure memPresMin Setting
+l maxPressure memPresMax Setting
+
+move diffPressure 0
+
+brgt curPressure minPressure 2
+sub diffPressure minPressure curPressure
+brlt curPressure maxPressure 2
+sub diffPressure maxPressure curPressure
+
+s memPressureDiff Setting diffPressure
+
+yield
+j loop

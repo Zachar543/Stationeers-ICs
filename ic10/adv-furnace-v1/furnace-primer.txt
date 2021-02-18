@@ -1,0 +1,92 @@
+alias prime d0
+alias furnace d1
+alias sensorChamber d2
+alias memChamberCooling d3
+alias inputDial d4
+alias outputDial d5
+
+alias ready r12
+alias stage r13
+alias diff r14
+alias input r15
+
+define targetPressure 3200
+
+move stage 0
+
+loop:
+yield
+
+l r0 prime Setting
+
+brnez r0 2
+move stage 0
+
+beqz r0 loop
+
+s furnace SettingInput 0
+s furnace SettingOutput 0
+s inputDial Setting 0
+s outputDial Setting 0
+s memChamberCooling Setting 0
+
+beq stage 0 prep
+beq stage 1 pressurize
+beq stage 2 ignite
+
+j loop
+
+prep:
+s furnace SettingOutput 100
+s outputDial Setting 100
+s memChamberCooling Setting 1
+
+l r0 furnace Pressure
+floor r0 r0
+slez r0 r0
+
+l r1 sensorChamber Temperature
+floor r1 r1
+slt r1 r1 373
+
+and ready r0 r1
+breqz ready 2
+move stage 1
+
+j loop
+
+pressurize:
+l r1 furnace Pressure
+sub diff targetPressure r1
+max diff diff 0
+div diff diff 200
+
+move input diff
+mul input input diff # = r2^2
+mul input input diff # = r2^3
+#mul input input diff # = r2^4
+#mul input input diff # = r2^5
+#mul input input diff # = r2^6
+#mul input input diff # = r2^7
+
+min input input 50
+max input input 1
+floor input input
+
+s furnace SettingInput input
+s inputDial Setting input
+
+l r0 furnace Pressure
+brlt r0 targetPressure 2
+move stage 2
+
+j loop
+
+ignite:
+s furnace Activate 1
+
+l r0 furnace Combustion
+breqz r0 2
+move stage 3
+
+j loop

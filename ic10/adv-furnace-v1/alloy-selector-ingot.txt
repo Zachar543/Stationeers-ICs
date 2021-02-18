@@ -1,0 +1,84 @@
+alias memHash d0
+alias memIngot1Hash d1
+alias memIngot2Hash d2
+alias memIngot3Hash d3
+#alias memIngot4Hash d4
+#alias memIngot5Hash d5
+
+define CARBON_HASH 1724793494
+define COBALT_HASH -983091249
+define COPPER_HASH -404336834
+define GOLD_HASH 226410516
+define IRON_HASH -1301215609
+define LEAD_HASH 2134647745
+define NICKEL_HASH -1406385572
+define SILICON_HASH -290196476
+define SILVER_HASH -929742000
+
+loop:
+
+s memIngot1Hash Setting 0
+s memIngot2Hash Setting 0
+s memIngot3Hash Setting 0
+#s memIngot4Hash Setting 0
+#s memIngot5Hash Setting 0
+
+l r0 memHash Setting
+
+# Astroloy
+brne r0 412924554 4
+s memIngot1Hash Setting IRON_HASH # 0.5
+s memIngot2Hash Setting COPPER_HASH # 0.25
+s memIngot3Hash Setting COBALT_HASH # 0.25
+
+# Hastelloy
+brne r0 1579842814 4
+s memIngot1Hash Setting SILVER_HASH # 0.25
+s memIngot2Hash Setting NICKEL_HASH # 0.5
+s memIngot3Hash Setting COBALT_HASH # 0.25
+
+# Inconel
+brne r0 -787796599 4
+s memIngot1Hash Setting IRON_HASH # 0.25
+s memIngot2Hash Setting GOLD_HASH # 0.25
+s memIngot3Hash Setting NICKEL_HASH # 0.5
+
+# Stellite
+brne r0 -1897868623 4
+s memIngot1Hash Setting SILVER_HASH # 0.25
+s memIngot2Hash Setting SILICON_HASH # 0.25
+s memIngot3Hash Setting COBALT_HASH # 0.5
+
+# Waspaloy
+brne r0 156348098 4
+s memIngot1Hash Setting SILVER_HASH # 0.25
+s memIngot2Hash Setting NICKEL_HASH # 0.5
+s memIngot3Hash Setting LEAD_HASH # 0.25
+
+# Constantan
+brne r0 1058547521 3
+s memIngot1Hash Setting COPPER_HASH # 0.5
+s memIngot2Hash Setting NICKEL_HASH # 0.5
+
+# Electrum
+brne r0 502280180 3
+s memIngot1Hash Setting GOLD_HASH # 0.5
+s memIngot2Hash Setting SILVER_HASH # 0.5
+
+# Invar
+brne r0 -297990285 3
+s memIngot1Hash Setting IRON_HASH # 0.5
+s memIngot2Hash Setting NICKEL_HASH # 0.5
+
+# Solder
+brne r0 -82508479 3
+s memIngot1Hash Setting IRON_HASH # 0.5
+s memIngot2Hash Setting LEAD_HASH # 0.5
+
+# Steel
+brne r0 -654790771 3
+s memIngot1Hash Setting IRON_HASH # 0.75
+s memIngot2Hash Setting CARBON_HASH # 0.25
+
+yield
+j loop

@@ -1,0 +1,82 @@
+alias furnace d0
+alias filter d1
+alias electro d2
+alias tankDirtyWater d3
+alias tankWater d4
+alias tankFuel d5
+
+alias disableFurnace r15
+alias disableFilter r14
+alias disableElectro r13
+
+define MAX_DIRTY_WATER_PRESSURE 20000
+define MAX_WATER_PRESSURE 20000
+define MAX_FUEL_PRESSURE 20000
+
+# Setup
+s furnace On 0
+s filter On 0
+s electro On 0
+
+loop:
+move disableFurnace 0
+move disableFilter 0
+move disableElectro 0
+
+jal _checkIce
+jal _checkFilters
+jal _checkPressure
+
+seqz r0 disableFurnace
+s furnace On r0
+seqz r0 disableFilter
+s filter On r0
+seqz r0 disableElectro
+s electro On r0
+
+breqz disableFurnace 2
+s furnace Activate 1
+
+yield
+j loop
+
+_checkIce:
+ls r0 furnace 0 Occupied
+seqz r0 r0
+or disableFurnace disableFurnace r0
+
+l r0 tankDirtyWater Pressure
+sgt r0 r0 MAX_DIRTY_WATER_PRESSURE
+or disableFurnace disableFurnace r0
+
+j ra
+
+_checkFilters:
+ls r1 filter 0 Quantity
+slt r1 r1 1
+ls r2 filter 1 Quantity
+slt r2 r2 1
+and r0 r1 r2
+
+or disableFilter disableFilter r0
+
+j ra
+
+_checkPressure:
+l r0 tankWater Pressure
+sgt r0 r0 MAX_WATER_PRESSURE
+or disableFilter disableFilter r0
+
+l r0 tankDirtyWater Pressure
+seqz r0 r0
+or disableFilter disableFilter r0
+
+l r0 tankFuel Pressure
+sgt r0 r0 MAX_FUEL_PRESSURE
+or disableElectro disableElectro r0
+
+l r0 tankWater Pressure
+seqz r0 r0
+or disableElectro disableElectro r0
+
+j ra

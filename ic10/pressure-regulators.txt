@@ -1,0 +1,41 @@
+alias canister1 d0
+alias pump1 d1
+alias canister2 d2
+alias pump2 d3
+alias canister3 d4
+alias pump3 d5
+
+brdns pump1 2
+s pump1 Setting 10
+
+brdns pump2 2
+s pump2 Setting 10
+
+brdns pump3 2
+s pump3 Setting 10
+
+loop:
+
+brdns pump1 6
+ls r0 canister1 0 Occupied
+ls r1 canister1 0 Pressure
+slt r1 r1 7999000
+and r0 r0 r1
+s pump1 On r0
+
+brdns pump2 6
+ls r0 canister2 0 Occupied
+ls r1 canister2 0 Pressure
+slt r1 r1 7999000
+and r0 r0 r1
+s pump2 On r0
+
+brdns pump3 6
+ls r0 canister3 0 Occupied
+ls r1 canister3 0 Pressure
+slt r1 r1 7999000
+and r0 r0 r1
+s pump3 On r0
+
+yield
+j loop

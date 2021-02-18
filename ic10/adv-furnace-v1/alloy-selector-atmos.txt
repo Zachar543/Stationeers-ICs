@@ -1,0 +1,99 @@
+alias memHash d0
+alias memPresMin d1
+alias memPresMax d2
+alias memTempMin d3
+alias memTempMax d4
+alias dial d5
+
+loop:
+
+s memHash Setting 0
+s memPresMin Setting 0
+s memPresMax Setting 100000
+s memTempMin Setting 0
+s memTempMax Setting 100000
+
+l r0 dial Setting
+
+# Astroloy
+brne r0 0 6
+s memHash Setting 412924554
+s memTempMin Setting 1000
+s memTempMax Setting 100000
+s memPresMin Setting 30000
+s memPresMax Setting 40000
+
+# Hastelloy
+brne r0 1 6
+s memHash Setting 1579842814
+s memTempMin Setting 950
+s memTempMax Setting 1000
+s memPresMin Setting 25000
+s memPresMax Setting 30000
+
+# Inconel
+brne r0 2 6
+s memHash Setting -787796599
+s memTempMin Setting 600
+s memTempMax Setting 100000
+s memPresMin Setting 23500
+s memPresMax Setting 24000
+
+# Stellite
+brne r0 3 6
+s memHash Setting -1897868623
+s memTempMin Setting 1800
+s memTempMax Setting 100000
+s memPresMin Setting 10000
+s memPresMax Setting 20000
+
+# Waspaloy
+brne r0 4 6
+s memHash Setting 156348098
+s memTempMin Setting 400
+s memTempMax Setting 800
+s memPresMin Setting 50000
+s memPresMax Setting 100000
+
+# Constantan
+brne r0 5 6
+s memHash Setting 1058547521
+s memTempMin Setting 1000
+s memTempMax Setting 10000
+s memPresMin Setting 20000
+s memPresMax Setting 100000
+
+# Electrum
+brne r0 6 6
+s memHash Setting 502280180
+s memTempMin Setting 600
+s memTempMax Setting 100000
+s memPresMin Setting 800
+s memPresMax Setting 2400
+
+# Invar
+brne r0 7 6
+s memHash Setting -297990285
+s memTempMin Setting 1200
+s memTempMax Setting 1500
+s memPresMin Setting 18000
+s memPresMax Setting 20000
+
+# Solder
+brne r0 8 6
+s memHash Setting -82508479
+s memTempMin Setting 350
+s memTempMax Setting 550
+s memPresMin Setting 1000
+s memPresMax Setting 100000
+
+# Steel
+brne r0 9 6
+s memHash Setting -654790771
+s memTempMin Setting 900
+s memTempMax Setting 100000
+s memPresMin Setting 1000
+s memPresMax Setting 100000
+
+yield
+j loop

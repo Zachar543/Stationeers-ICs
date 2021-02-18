@@ -1,0 +1,27 @@
+alias advFurnace d0
+alias memTempMin d1
+alias memTempMax d2
+alias memTempDiff d3
+
+alias curTemp r15
+alias minTemp r14
+alias maxTemp r13
+alias diffTemp r12
+
+loop:
+
+l curTemp advFurnace Temperature
+l minTemp memTempMin Setting
+l maxTemp memTempMax Setting
+
+move diffTemp 0
+
+brgt curTemp minTemp 2
+sub diffTemp minTemp curTemp
+brlt curTemp maxTemp 2
+sub diffTemp maxTemp curTemp
+
+s memTempDiff Setting diffTemp
+
+yield
+j loop
