@@ -1,0 +1,125 @@
+alias memItem d0
+alias memQty d1
+alias vend d2
+alias stacker d3
+alias sorter d4
+alias debug d5
+
+alias reqItem r0
+alias reqQty r1
+alias stepQty r2
+
+alias step r3
+
+s vend RequestHash 0
+s vend Activate 0
+s stacker Mode 1
+s sorter Mode 2
+
+loop:
+yield
+
+l reqItem memItem Setting
+beqz reqItem loop
+l reqQty memQty Setting
+blez reqQty loop
+
+beqal step 0 pullItem
+yield
+beqal step 1 waitStacker
+yield
+#beqal step 2 waitSorter
+yield
+#jal processStacker
+jal processSorter
+
+j loop
+
+pullItem:
+s debug Setting 0
+l reqItem memItem Setting
+beqz reqItem loop
+l reqQty memQty Setting
+beqz reqQty loop
+
+s debug Setting 01
+s stacker Mode 1
+s sorter Mode 2
+
+s vend RequestHash reqItem
+s vend Activate 1
+
+move step 1
+
+j ra
+
+waitStacker:
+s debug Setting 10
+
+s stacker Setting 50
+#s stacker Mode 1
+
+ls r15 stacker 2 Occupied
+beqz r15 ra
+
+s debug Setting 11
+
+ls r15 stacker 2 OccupantHash
+breq r15 reqItem 3
+s stacker Activate 1
+j ra
+
+s debug Setting 12
+
+ls r15 stacker 2 MaxQuantity
+min stepQty reqQty r15
+
+ls r15 stacker 2 Quantity
+brlt r15 stepQty 3
+s stacker Activate 1
+j ra
+
+s stacker Setting stepQty
+
+s debug Setting 13
+
+j ra
+
+processSorter:
+s debug Setting 20
+
+ls r15 sorter 0 Occupied
+beqz r15 ra
+
+s debug Setting 21
+
+ls r15 sorter 0 OccupantHash
+breq r15 reqItem 3
+s sorter Output 1
+j ra
+
+s debug Setting 22
+
+ls r15 sorter 0 Quantity
+#brgt r15 reqQty 3
+#s sorter Output 1
+#j ra
+
+s sorter Output 0
+sleep 5
+
+sub reqQty reqQty r15
+
+s debug Setting 23
+
+brgtz reqQty 4
+s memQty Setting 0
+s memItem Setting 0
+move step 0
+
+s debug Setting 24
+
+brlez reqQty 2
+move step 1
+
+j ra
