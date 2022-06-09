@@ -1,0 +1,69 @@
+# Router Node
+alias memBus d0
+alias sorter d1
+
+# Init Socket
+alias id r15
+l id db Setting
+
+# Init Sorter
+s sorter Mode 2
+
+loop:
+yield
+
+# TODO - Read commands?
+
+ls r0 sorter 0 OccupantHash
+# Quit if sorter is empty
+beqz r0 loop
+
+ls r1 sorter 0 Quantity
+jal scan_stack
+
+j loop
+
+scan_stack:
+peek r14
+beqz r14 scan_stack_end
+
+scan_stack_next:
+pop r0
+pop r1
+
+
+
+push r1
+push r0
+
+beqz scan_stack_end
+
+scan_stack_end:
+j ra
+
+
+
+
+#read:
+#move r0 0
+#l r14 memIO Setting
+#mod r0 r14 100
+## Ensure message is for this chip
+#bne r0 id ra
+#div r0 r14 100
+#floor r0 r0
+#j ra
+
+write:
+# Wait until bus is not in use
+l r14 memBus Setting
+brnez r14 3
+yield
+j write
+
+# Message = (value * 100) + id
+mul r14 r1 100
+add r14 r14 r0
+s memBus Setting r14
+
+j ra

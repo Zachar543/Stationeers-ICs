@@ -1,0 +1,108 @@
+alias memReq d0
+alias memResp d1
+
+alias message r0
+alias target r1
+alias command r2
+alias data r3
+alias maxId r4
+
+j initSelf
+
+loop:
+yield
+
+j checkMessages
+afterCheckMessages:
+
+j loop
+
+
+checkMessages:
+l message memReq Setting
+jal decode
+
+# Ignore messages not addressed to us
+bne target selfId afterCheckMessages
+
+breq command 99 handleCmdRequestId
+#breq command ## handleCmd_________
+#breq command ## handleCmd_________
+#breq command ## handleCmd_________
+j afterCheckMessages
+
+handleCmdRequestId:
+move target selfId
+add maxId maxId 1
+move data maxId
+jal encode
+jal writeResp
+
+j afterCheckMessages
+
+
+
+
+
+initId:
+define selfId 1
+move maxId 1
+s db Setting 1
+j loop
+
+# Inputs: r0 = Encoded Data
+# Outputs: target = Target, command = Command, data = Data
+decode:
+# Extract Target
+abs target message
+mod target target 100
+
+# Extract Command
+abs command message
+div command command 100
+floor command command
+mod command command 100
+
+# Extract Data
+abs data message
+div data data 10000
+floor data data
+
+# Re-introduce sign if needed
+brgez message 2
+mul data data -1
+
+j ra
+
+
+# Inputs: target = Target, command = Command, data = Data
+# Outputs: message = Encoded Data
+encode:
+# Encode Data
+abs message data
+mul message message 10000
+
+# Encode Command
+mul r15 command 100
+add message message r15
+
+# Encode Target
+add message message target
+
+# Re-introduce sign if needed
+brgez data 2
+mul message message -1
+
+j ra
+
+
+writeResp:
+# Wait for memResp to be empty
+l r15 memResp Setting
+breqz r15 3
+yield
+j writeResp
+
+s memResp Setting message
+
+j ra

@@ -1,0 +1,35 @@
+alias input d0
+alias target d1
+alias output d2
+
+define kp 0
+define ki 0
+define kd 0
+define minValue 0
+define maxValue 100
+
+alias error r0
+alias lastError r1
+alias totalError r2
+alias deltaError r2
+
+loop:
+yield
+
+sub error target input
+add totalError totalError error
+min totalError totalError maxValue
+max totalError totalError minValue
+
+sub deltaError error lastError
+
+# output=(kp*error)+(ki*totalError)+(kd*deltaError)
+
+mul output kp error
+mul r15 ki totalError
+add output output r15
+mul r15 kd deltaError
+add output output r15
+move output r14
+
+j loop

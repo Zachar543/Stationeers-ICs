@@ -1,0 +1,178 @@
+alias memReq d0
+alias memResp d1
+alias sorter d2
+alias machine d3
+
+alias message r0
+alias target r1
+alias command r2
+alias data r3
+alias selfId r4
+alias reqHash r5
+alias reqQty r6
+
+# Sorter Init
+s sorter Mode 2
+
+j initSelf
+
+loop:
+yield
+
+#j checkMessages
+#afterCheckMessages:
+
+j checkSorter
+afterCheckSorter:
+
+j checkMachine
+afterCheckMachine:
+
+j loop
+
+
+#checkMessages:
+#l message memReq Setting
+#beqz message afterCheckMessages
+#
+#jal decode
+#
+# Ignore messages not addressed to us
+#breq target 0 3
+#breq target selfId 2
+#j afterCheckMessages
+#breq command 99 handleCmdRequestId
+#breq command ## handleCmd_________
+#breq command ## handleCmd_________
+#breq command ## handleCmd_________
+#j afterCheckMessages
+#handleCmdRequestId:
+#j afterCheckMessages
+
+
+checkSorter:
+# Check if sorter is occupied
+ls r15 sorter 0 OccupantHash
+beqz r15 afterCheckSorter
+
+# If not expected item, reject
+bne r15 reqHash checkSorterReject
+
+# If no more qty is needed, reject
+blez reqQty checkSorterReject
+
+ls r15 sorter 0 Quantity
+sub reqQty reqQty r15
+max reqQty reqQty 0
+
+# Clear reqHash
+brgtz reqQty 3
+move reqHash 0
+
+s sorter Output 1
+j afterCheckSorter
+
+checkSorterReject:
+s sorter Output 0
+j afterCheckSorter
+
+
+
+
+
+
+
+initSelf:
+l r15 db Setting
+bnez r15 loop
+move target 1
+move command 99
+move data 0
+jal encode
+jal writeReq
+jal readResp
+jal decode
+s db Setting data
+move selfId data
+j loop
+
+
+decode:
+# Extract Target
+abs target message
+mod target target 100
+
+# Extract Command
+abs command message
+div command command 100
+floor command command
+mod command command 100
+
+# Extract Data
+abs data message
+div data data 10000
+floor data data
+
+# Re-introduce sign if needed
+brgez message 2
+mul data data -1
+
+j ra
+
+
+encode:
+# Encode Data
+abs message data
+mul message message 10000
+
+# Encode Command
+mul r15 command 100
+add message message r15
+
+# Encode Target
+add message message target
+
+# Re-introduce sign if needed
+brgez data 2
+mul message message -1
+
+j ra
+
+
+writeReq:
+# Wait for memReq to be empty
+l r15 memReq Setting
+breqz r15 3
+yield
+j writeReq
+
+s memReq Setting message
+s memResp Setting 0
+
+j ra
+
+
+readResp:
+# Wait for memResp to be non-empty
+l r15 memResp Setting
+brnez r15 3
+yield
+j readResp
+
+move message r15
+s memReq Setting 0
+s memResp Setting 0
+
+j ra
+
+
+writeResp:
+# Wait for memResp to be empty
+l r15 memResp Setting
+breqz r15 3
+yield
+j writeResp
+
+s memResp Setting message
+
+j ra

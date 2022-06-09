@@ -1,0 +1,97 @@
+alias stacker d0
+alias sorter d1
+alias memHash d2
+alias memQty d3
+
+alias reqHash r0
+alias reqQty r1
+alias reqPending r2
+
+# Stacker Init
+s stacker Mode 1
+s stacker Setting 10000
+
+# Sorter Init
+s sorter Mode 2
+
+loop:
+yield
+
+l reqHash memHash Setting
+l reqQty memQty Setting
+
+jal checkSorter
+jal checkStacker
+
+j loop
+
+
+checkStacker:
+# Check if stacker is occupied
+ls r15 stacker 2 OccupantHash
+beqz r15 ra
+
+# If not expected item, eject
+bne r15 reqHash checkStackerSkip
+
+# If no more qty is needed, eject
+blez reqQty checkStackerSkip
+
+# Eject min(reqQty, occupant qty)
+ls r15 stacker 2 Quantity
+min r14 r15 reqQty
+s stacker Setting r14
+s stacker Output 1
+s stacker Output 0
+
+yield
+l r15 stacker ExportCount
+s stacker ClearMemory 1
+s stacker ClearMemory 0
+
+add reqPending reqPending r14
+
+# Subtract sent qty and save to memQty
+breqz r15 2
+sub reqQty reqQty r14
+max reqQty reqQty 0
+s memQty Setting reqQty
+
+j ra
+
+checkStackerSkip:
+ls r15 stacker 2 Quantity
+s stacker Setting r15
+s stacker Output 1
+s stacker Output 0
+
+j ra
+
+
+
+checkSorter:
+# Check if sorter is occupied
+ls r15 sorter 0 OccupantHash
+beqz r15 ra
+
+# If not expected item, eject
+bne r15 reqHash checkSorterReject
+
+# If no more qty is needed, eject
+blez reqPending checkSorterReject
+
+ls r15 sorter 0 Quantity
+sub reqPending reqPending r15
+max reqPending reqPending 0
+
+# Clear reqHash
+brgtz reqPending 3
+move reqHash 0
+s memHash Setting 0
+
+s sorter Output 1
+j ra
+
+checkSorterReject:
+s sorter Output 0
+j ra
