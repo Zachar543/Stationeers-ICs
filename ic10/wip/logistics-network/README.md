@@ -1,7 +1,7 @@
 # Protocol
 
 ### Message Data Format
-Format:`-CCCCCCCCBBAA`
+Format: `-CCCCCCCCBBAA`
 
 `A` = Target (2-digits),
 `B` = Command (2-digits),
