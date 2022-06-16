@@ -7,13 +7,16 @@ alias command r2
 alias data r3
 alias maxId r4
 
-j initSelf
+define selfId 1
+move maxId 1
 
 loop:
 yield
 
 j checkMessages
 afterCheckMessages:
+
+s db Setting message
 
 j loop
 
@@ -40,15 +43,6 @@ jal writeResp
 
 j afterCheckMessages
 
-
-
-
-
-initId:
-define selfId 1
-move maxId 1
-s db Setting 1
-j loop
 
 # Inputs: r0 = Encoded Data
 # Outputs: target = Target, command = Command, data = Data
@@ -100,6 +94,7 @@ writeResp:
 # Wait for memResp to be empty
 l r15 memResp Setting
 breqz r15 3
+s db Setting 103
 yield
 j writeResp
 
