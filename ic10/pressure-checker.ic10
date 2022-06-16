@@ -1,0 +1,21 @@
+alias pressure1 d0
+alias pressure2 d1
+alias output1 d2
+
+define pressure1PressureMin 50
+define pressure2PressureMax 5000
+
+loop:
+yield
+
+l r0 pressure1 Pressure
+ble r0 pressure1PressureMin turnOff
+l r0 pressure2 Pressure
+bge r0 pressure2PressureMax turnOff
+
+s output1 On 1
+j loop
+
+turnOff:
+s output1 On 0
+j loop
