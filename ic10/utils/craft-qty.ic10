@@ -1,0 +1,23 @@
+# Runs a crafter for a specific number of items
+alias machine d0
+alias dial d1
+
+loop:
+yield
+
+l r1 dial Setting
+brgtz r1 3
+s machine Activate 0
+j loop
+
+l r0 machine ExportCount
+beqz r0 loop
+
+sub r1 r1 1
+max r1 r1 0
+s dial Setting r1
+
+s machine ClearMemory 1
+s machine ClearMemory 0
+
+j loop

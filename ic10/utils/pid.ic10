@@ -24,7 +24,6 @@ max totalError totalError minValue
 sub deltaError error lastError
 
 # output=(kp*error)+(ki*totalError)+(kd*deltaError)
-
 mul output kp error
 mul r15 ki totalError
 add output output r15
