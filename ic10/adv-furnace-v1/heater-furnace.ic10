@@ -1,0 +1,110 @@
+alias furnace d0
+alias pumpFuel d1
+alias analyzerHeater d2
+alias analyzerTank d3
+alias valveReliefVent d4
+
+alias timer r12
+alias stage r13
+alias diff r14
+alias input r15
+
+define targetPressure 1900
+define maxTankTemp 1900
+define stage_idle 0
+define stage_draining 1
+define stage_fueling 2
+define stage_igniting 3
+define stage_stablizing 4
+define stage_cooling 5
+
+s furnace SettingInput 100
+s furnace SettingOutput 100
+s pumpFuel Setting 0
+s valveReliefVent On 0
+s valveReliefVent Setting 1000
+
+loop:
+yield
+
+div r0 stage 5
+s db Setting r0
+
+beq stage stage_idle idle
+beq stage stage_draining draining
+beq stage stage_fueling fueling
+beq stage stage_igniting igniting
+beq stage stage_stablizing stablizing
+beq stage stage_cooling cooling
+move stage stage_idle
+j loop
+
+idle:
+s furnace SettingInput 100
+s furnace SettingOutput 0
+s valveReliefVent On 0
+s pumpFuel Setting 0
+l r0 analyzerTank Temperature
+brgt r0 maxTankTemp 2
+move stage stage_draining
+j loop
+
+draining:
+s furnace SettingInput 0
+s furnace SettingOutput 100
+s pumpFuel Setting 0
+s valveReliefVent On 1
+
+l r0 analyzerHeater Pressure
+l r1 furnace Pressure
+add r0 r0 r1
+floor r0 r0
+brgtz r0 2
+move stage stage_fueling
+j loop
+
+fueling:
+s furnace SettingInput 100
+s furnace SettingOutput 0
+s valveReliefVent On 0
+
+l r0 furnace Pressure
+sub diff targetPressure r0
+max diff diff 0
+div diff diff 100
+move input diff
+#mul input input diff # = r2^2
+min input input 100
+max input input 1
+floor input input
+s pumpFuel Setting input
+
+brlt r0 targetPressure 2
+move stage stage_igniting
+j loop
+
+igniting:
+s furnace SettingInput 0
+s furnace SettingOutput 0
+s furnace Activate 1
+
+l r0 furnace Combustion
+breqz r0 3
+move timer 60
+move stage stage_stablizing
+j loop
+
+stablizing:
+s furnace SettingInput 0
+s furnace SettingOutput 100
+sub timer timer 1
+brgtz timer 2
+move stage stage_cooling
+j loop
+
+cooling:
+l r0 analyzerHeater Temperature
+l r1 analyzerTank Temperature
+brgt r0 r1 2
+move stage stage_idle
+j loop

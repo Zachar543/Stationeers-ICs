@@ -1,0 +1,25 @@
+alias analyzerHeater d0
+alias analyzerTank d1
+alias pumpExchanger1 d2
+alias pumpExchanger2 d3
+alias valveReliefVent d4
+
+s analyzerHeater On 1
+s analyzerTank On 1
+s pumpExchanger1 On 0
+s pumpExchanger2 On 0
+
+loop:
+l r0 analyzerHeater Temperature
+l r1 analyzerTank Temperature
+sgt r0 r0 r1
+s pumpExchanger1 On r0
+s pumpExchanger2 On r0
+
+l r0 analyzerHeater Pressure
+sgt r0 r0 39000
+breqz r0 2
+s valveReliefVent On 1
+
+yield
+j loop

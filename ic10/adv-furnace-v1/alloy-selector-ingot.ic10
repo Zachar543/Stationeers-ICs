@@ -14,6 +14,7 @@ define LEAD_HASH 2134647745
 define NICKEL_HASH -1406385572
 define SILICON_HASH -290196476
 define SILVER_HASH -929742000
+define STEEL_HASH -654790771
 
 loop:
 
@@ -27,7 +28,7 @@ l r0 memHash Setting
 
 # Astroloy
 brne r0 412924554 4
-s memIngot1Hash Setting IRON_HASH # 0.5
+s memIngot1Hash Setting STEEL_HASH # 0.5
 s memIngot2Hash Setting COPPER_HASH # 0.25
 s memIngot3Hash Setting COBALT_HASH # 0.25
 
@@ -39,9 +40,9 @@ s memIngot3Hash Setting COBALT_HASH # 0.25
 
 # Inconel
 brne r0 -787796599 4
-s memIngot1Hash Setting IRON_HASH # 0.25
-s memIngot2Hash Setting GOLD_HASH # 0.25
-s memIngot3Hash Setting NICKEL_HASH # 0.5
+s memIngot1Hash Setting GOLD_HASH # 0.5
+s memIngot2Hash Setting STEEL_HASH # 0.25
+s memIngot3Hash Setting NICKEL_HASH # 0.25
 
 # Stellite
 brne r0 -1897868623 4

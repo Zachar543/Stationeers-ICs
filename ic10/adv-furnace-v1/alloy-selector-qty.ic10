@@ -27,58 +27,58 @@ l r0 memHash Setting
 
 # Astroloy
 brne r0 412924554 4
-s memIngot1Qty Setting 0.5 # Iron
-s memIngot2Qty Setting 0.25 # Copper
-s memIngot3Qty Setting 0.25 # Cobalt
+s memIngot1Qty Setting 2 # Steel
+s memIngot2Qty Setting 1 # Copper
+s memIngot3Qty Setting 1 # Cobalt
 
 # Hastelloy
 brne r0 1579842814 4
-s memIngot1Qty Setting 0.25 # Silver
-s memIngot2Qty Setting 0.5 # Nickel
-s memIngot3Qty Setting 0.25 # Cobalt
+s memIngot1Qty Setting 2 # Silver
+s memIngot2Qty Setting 1 # Nickel
+s memIngot3Qty Setting 1 # Cobalt
 
 # Inconel
 brne r0 -787796599 4
-s memIngot1Qty Setting 0.25 # Iron
-s memIngot2Qty Setting 0.25 # Gold
-s memIngot3Qty Setting 0.5 # Nickel
+s memIngot1Qty Setting 2 # Gold
+s memIngot2Qty Setting 1 # Steel
+s memIngot3Qty Setting 1 # Nickel
 
 # Stellite
 brne r0 -1897868623 4
-s memIngot1Qty Setting 0.25 # Silver
-s memIngot2Qty Setting 0.25 # Silicon
-s memIngot3Qty Setting 0.5 # Cobalt
+s memIngot1Qty Setting 1 # Silver
+s memIngot2Qty Setting 2 # Silicon
+s memIngot3Qty Setting 1 # Cobalt
 
 # Waspaloy
 brne r0 156348098 4
-s memIngot1Qty Setting 0.25 # Silver
-s memIngot2Qty Setting 0.5 # Nickel
-s memIngot3Qty Setting 0.25 # Lead
+s memIngot1Qty Setting 1 # Silver
+s memIngot2Qty Setting 1 # Nickel
+s memIngot3Qty Setting 2 # Lead
 
 # Constantan
 brne r0 1058547521 3
-s memIngot1Qty Setting 0.5 # Copper
-s memIngot2Qty Setting 0.5 # Nickel
+s memIngot1Qty Setting 1 # Copper
+s memIngot2Qty Setting 1 # Nickel
 
 # Electrum
 brne r0 502280180 3
-s memIngot1Qty Setting 0.5 # Gold
-s memIngot2Qty Setting 0.5 # Silver
+s memIngot1Qty Setting 1 # Gold
+s memIngot2Qty Setting 1 # Silver
 
 # Invar
 brne r0 -297990285 3
-s memIngot1Qty Setting 0.5 # Iron
-s memIngot2Qty Setting 0.5 # Nickel
+s memIngot1Qty Setting 1 # Iron
+s memIngot2Qty Setting 1 # Nickel
 
 # Solder
 brne r0 -82508479 3
-s memIngot1Qty Setting 0.5 # Iron
-s memIngot2Qty Setting 0.5 # Lead
+s memIngot1Qty Setting 1 # Iron
+s memIngot2Qty Setting 1 # Lead
 
 # Steel
 brne r0 -654790771 3
-s memIngot1Qty Setting 0.75 # Iron
-s memIngot2Qty Setting 0.25 # Carbon
+s memIngot1Qty Setting 3 # Iron
+s memIngot2Qty Setting 1 # Carbon
 
 yield
 j loop

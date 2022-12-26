@@ -59,7 +59,7 @@ s memPresMax Setting 100000
 brne r0 5 6
 s memHash Setting 1058547521
 s memTempMin Setting 1000
-s memTempMax Setting 10000
+s memTempMax Setting 100000
 s memPresMin Setting 20000
 s memPresMax Setting 100000
 

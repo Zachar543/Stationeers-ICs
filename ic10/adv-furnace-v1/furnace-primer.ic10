@@ -10,7 +10,7 @@ alias stage r13
 alias diff r14
 alias input r15
 
-define targetPressure 3200
+define targetPressure 2500
 
 move stage 0
 
@@ -63,7 +63,7 @@ div diff diff 200
 
 move input diff
 mul input input diff # = r2^2
-mul input input diff # = r2^3
+#mul input input diff # = r2^3
 #mul input input diff # = r2^4
 #mul input input diff # = r2^5
 #mul input input diff # = r2^6
