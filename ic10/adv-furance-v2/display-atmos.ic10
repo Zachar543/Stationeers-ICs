@@ -1,0 +1,49 @@
+alias memSelection d0
+alias furnace d1
+alias ledPresGood d2
+alias ledTempGood d3
+alias displayPresOffset d4
+alias displayTempOffset d5
+
+alias minTemp r12
+alias maxTemp r13
+alias minPres r14
+alias maxPres r15
+
+s ledPresGood On 0
+s ledTempGood On 0
+s displayPresOffset Setting 0
+s displayTempOffset Setting 0
+
+loop:
+yield
+
+l r0 memSelection Setting
+mul r0 r0 11
+add sp r0 15
+pop maxPres
+pop minPres
+pop maxTemp
+pop minTemp
+
+l r0 furnace Pressure
+sub r1 minPres r0
+max r1 r1 0
+sub r2 maxPres r0
+min r2 r2 0
+add r0 r1 r2
+s displayPresOffset Setting r0
+seqz r0 r0
+s ledPresGood On r0
+
+l r0 furnace Temperature
+sub r1 minTemp r0
+max r1 r1 0
+sub r2 maxTemp r0
+min r2 r2 0
+add r0 r1 r2
+s displayTempOffset Setting r0
+seqz r0 r0
+s ledTempGood On r0
+
+j loop

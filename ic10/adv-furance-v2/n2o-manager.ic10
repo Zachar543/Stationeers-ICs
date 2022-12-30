@@ -1,0 +1,78 @@
+alias analyzerH2 d0
+alias analyzerN2O d1
+alias heaterH2 d2
+alias heaterN2O d3
+alias mixer d4
+alias analyzerOutput d5
+
+s heaterH2 On 0
+s heaterN2O On 0
+s mixer Setting 50
+
+loop:
+yield
+jal check_heaters
+jal check_mixer_ratio
+jal check_output
+j loop
+
+check_heaters:
+# Heat if H2 < 50C
+l r0 analyzerH2 Temperature
+slt r0 r0 324
+s heaterH2 On r0
+# Heat if N2O < 50C
+l r0 analyzerN2O Temperature
+slt r0 r0 324
+s heaterN2O On r0
+
+j ra
+
+check_mixer_ratio:
+# Avoid NaNs in the Ratio* fields if output is a vacuum
+l r0 analyzerOutput Pressure
+brnez r0 3
+s mixer Setting 50
+j ra
+
+l r2 analyzerOutput TotalMoles
+l r0 analyzerOutput RatioNitrousOxide
+mul r0 r0 r2 # Moles of NitrousOxide
+l r1 analyzerOutput RatioVolatiles
+mul r1 r1 r2 # Moles of Volatiles
+add r2 r0 r1 # Sum of relevant gasses
+
+# Avoid Div by Zero if output has neither N2O nor H2
+brnez r2 3
+s mixer Setting 50
+j ra
+
+#div r0 r0 r2
+#mul r0 r0 100
+#s mixer Setting r0
+div r1 r1 r2
+mul r1 r1 100
+s mixer Setting r1
+
+j ra
+
+check_output:
+# Ensure input pipes have enough gas at the right temperature to auto-ignite
+# and output is under 25MPa
+l r0 analyzerOutput Pressure
+slt r0 r0 25000
+l r1 analyzerH2 Temperature
+sgt r1 r1 324
+and r0 r0 r1
+l r1 analyzerN2O Temperature
+sgt r1 r1 324
+and r0 r0 r1
+l r1 analyzerH2 TotalMoles
+sgt r1 r1 10
+and r0 r0 r1
+l r1 analyzerN2O TotalMoles
+sgt r1 r1 10
+and r0 r0 r1
+s mixer On r0
+
+j ra

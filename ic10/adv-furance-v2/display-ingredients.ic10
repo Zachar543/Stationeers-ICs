@@ -1,0 +1,35 @@
+alias memIngot1Hash d0
+alias memIngot2Hash d1
+alias memIngot3Hash d2
+alias displayIngot1Qty d3
+alias displayIngot2Qty d4
+alias displayIngot3Qty d5
+
+s memIngot1Hash Setting 0
+s memIngot2Hash Setting 0
+s memIngot3Hash Setting 0
+s displayIngot1Qty Setting 0
+s displayIngot2Qty Setting 0
+s displayIngot3Qty Setting 0
+
+loop:
+yield
+
+l r0 db Setting
+mul r0 r0 11
+add sp r0 21
+
+pop r0
+s displayIngot3Qty Setting r0
+pop r0
+s displayIngot2Qty Setting r0
+pop r0
+s displayIngot1Qty Setting r0
+pop r0
+s memIngot3Hash Setting r0
+pop r0
+s memIngot2Hash Setting r0
+pop r0
+s memIngot1Hash Setting r0
+
+j loop

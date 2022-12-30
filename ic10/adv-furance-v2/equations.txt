@@ -1,0 +1,13 @@
+P = Pressure
+n = Moles
+R = 8.31446261815324
+T = Temperature
+
+dP=(dnRT)/V
+n=(PV)/(RT)
+
+Pressure Loss due to Output:
+n=(PVo)/(RT)
+dP=(nRT)/V
+dP=(((PVo)/(RT))RT)/V
+dP=(VoP)/V

@@ -1,0 +1,83 @@
+alias furnace d0
+alias memSelection d1
+alias switchEject d2
+alias tankBuffer d3
+
+alias inputMult r10
+alias targetHash r11
+alias targetTempMin r12
+alias targetTempMax r13
+alias targetPresMin r14
+alias targetPresMax r15
+
+s furnace SettingOutput 0
+s furnace SettingInput 0
+
+loop:
+yield
+
+# Over-pressure detection
+l r0 furnace Pressure
+brgt r0 60000 4
+s furnace SettingOutput 100
+s furnace SettingInput 0
+j loop
+
+l r0 memSelection Setting
+mul r0 r0 11
+add sp r0 15
+pop targetPresMax
+sub targetPresMax targetPresMax 100
+pop targetPresMin
+add targetPresMin targetPresMin 100
+pop targetTempMax
+sub targetTempMax targetTempMax 100
+pop targetTempMin
+add targetTempMin targetTempMin 100
+pop targetHash
+
+l r0 switchEject Setting
+s furnace Open r0
+
+# Manage SettingInput & SettingOutput
+move r2 50
+move r3 50
+
+add r4 targetPresMax targetPresMin
+div r4 r4 2
+min r4 r4 55000
+
+l r0 furnace Pressure
+bgt r0 r4 decrease_pressure
+blt r0 r4 increase_pressure
+
+increase_pressure:
+sub r1 r4 r0
+div r1 r1 1000
+mul r1 r1 r1
+min r1 r1 50
+add r2 r2 r1
+sub r3 r3 r1
+j done
+
+decrease_pressure:
+sub r1 r0 r4
+div r1 r1 1000
+mul r1 r1 r1
+min r1 r1 50
+sub r2 r2 r1
+add r3 r3 r1
+done:
+
+# Limit input based on diff from buffer tank
+#l r0 furnace Pressure
+#l r1 tankBuffer Pressure
+#div inputMult r0 r1
+#min inputMult inputMult 1
+#s db Setting inputMult
+#mul r2 r2 inputMult
+
+s furnace SettingInput r2
+s furnace SettingOutput r3
+
+j loop

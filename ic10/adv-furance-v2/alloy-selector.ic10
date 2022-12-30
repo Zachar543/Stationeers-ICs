@@ -1,0 +1,34 @@
+alias dialSelection d0
+alias buttonSelect d1
+alias memPreviewHash d2
+alias memSelectedAlloy d3
+alias memSelectedHash d4
+alias icDisplayIngredients d5
+
+loop:
+yield
+
+# Update preview
+l r0 dialSelection Setting
+jal read_stack
+s memPreviewHash Setting r0
+
+# Update selected alloy on click of buttonSelect
+l r0 buttonSelect Setting
+breqz r0 3
+l r0 dialSelection Setting
+s memSelectedAlloy Setting r0
+
+# Output selected alloy to other ICs
+l r0 memSelectedAlloy Setting
+jal read_stack
+s memSelectedHash Setting r0
+s icDisplayIngredients Setting r0
+
+j loop
+
+read_stack:
+mul sp r0 11
+add sp sp 11
+pop r0
+j ra

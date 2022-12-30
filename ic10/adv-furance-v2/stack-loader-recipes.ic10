@@ -1,0 +1,124 @@
+yield
+move sp 10
+
+# Astroloy
+push 412924554
+push 1000
+push 100000
+push 30000
+push 40000
+push -654790771 # Steel
+push -404336834 # Copper
+push -983091249 # Cobalt
+push 2
+push 1
+push 1
+# Hastelloy
+push 1579842814
+push 950
+push 1000
+push 25000
+push 30000
+push -929742000 # Silver
+push -1406385572 # Nickel
+push -983091249 # Cobalt
+push 2
+push 1
+push 1
+# Inconel
+push -787796599
+push 600
+push 100000
+push 23500
+push 24000
+push 226410516 # Gold
+push -654790771 # Steel
+push -1406385572 # Nickel
+push 2
+push 1
+push 1
+# Stellite
+push -1897868623
+push 1800
+push 100000
+push 10000
+push 20000
+push -929742000 # Silver
+push -290196476 # Silicon
+push -983091249 # Cobalt
+push 1
+push 2
+push 1
+# Waspaloy
+push 156348098
+push 400
+push 800
+push 50000
+push 60000 # Limited by Furnace
+push -929742000 # Silver
+push -1406385572 # Nickel
+push 2134647745 # Lead
+push 1
+push 1
+push 2
+# Constantan
+push 1058547521
+push 1000
+push 100000
+push 20000
+push 60000 # Limited by Furnace
+push -404336834 # Copper
+push -1406385572 # Nickel
+push 0
+push 1
+push 1
+push 0
+# Electrum
+push 502280180
+push 600
+push 100000
+push 800
+push 2400
+push 226410516 # Gold
+push -929742000 # Silver
+push 0
+push 1
+push 1
+push 0
+# Invar
+push -297990285
+push 1200
+push 1500
+push 18000
+push 20000
+push -1301215609 # Iron
+push -1406385572 # Nickel
+push 0
+push 1
+push 1
+push 0
+# Solder
+push -82508479
+push 350
+push 550
+push 1000
+push 60000 # Limited by Furnace
+push -1301215609 # Iron
+push 2134647745 # Lead
+push 0
+push 1
+push 1
+push 0
+# Steel
+push -654790771
+push 900
+push 100000
+push 1000
+push 60000 # Limited by Furnace
+push -1301215609 # Iron
+push 1724793494 # Carbon
+push 0
+push 3
+push 1
+push 0
+j 0
