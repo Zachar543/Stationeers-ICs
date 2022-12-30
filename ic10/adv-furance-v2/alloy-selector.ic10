@@ -21,9 +21,9 @@ s memSelectedAlloy Setting r0
 
 # Output selected alloy to other ICs
 l r0 memSelectedAlloy Setting
+s icDisplayIngredients Setting r0
 jal read_stack
 s memSelectedHash Setting r0
-s icDisplayIngredients Setting r0
 
 j loop
 

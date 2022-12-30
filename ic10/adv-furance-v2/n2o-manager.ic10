@@ -67,6 +67,10 @@ and r0 r0 r1
 l r1 analyzerN2O Temperature
 sgt r1 r1 324
 and r0 r0 r1
+l r1 analyzerOutput Temperature
+sgt r1 r1 1000
+or r0 r0 r1
+
 l r1 analyzerH2 TotalMoles
 sgt r1 r1 10
 and r0 r0 r1

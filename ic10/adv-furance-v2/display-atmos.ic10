@@ -1,4 +1,4 @@
-alias memSelection d0
+alias memSelectedAlloy d0
 alias furnace d1
 alias ledPresGood d2
 alias ledTempGood d3
@@ -18,7 +18,7 @@ s displayTempOffset Setting 0
 loop:
 yield
 
-l r0 memSelection Setting
+l r0 memSelectedAlloy Setting
 mul r0 r0 11
 add sp r0 15
 pop maxPres

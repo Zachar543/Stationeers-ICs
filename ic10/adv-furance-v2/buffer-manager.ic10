@@ -1,4 +1,4 @@
-alias memSelection d0
+alias memSelectedAlloy d0
 alias pumpFuel d1
 alias pumpCool d2
 alias pumpVent d3
@@ -15,16 +15,15 @@ s pumpFuel On 0
 loop:
 yield
 
-l r0 memSelection Setting
+l r0 memSelectedAlloy Setting
 mul r0 r0 11
 add sp r0 13
 pop targetTempMax
-sub targetTempMax targetTempMax 100
 pop targetTempMin
-add targetTempMin targetTempMin 100
 
 add targetTempAvg targetTempMin targetTempMax
 div targetTempAvg targetTempAvg 2
+min targetTempAvg targetTempAvg 2000
 
 # Manage blowoff valve
 l r0 tankBuffer Pressure
@@ -37,6 +36,7 @@ s pumpVent On 0
 l r0 tankBuffer Temperature
 sgt r0 r0 targetTempMax
 s pumpCool On r0
+s db Setting targetTempAvg
 
 # Manage fuel intake
 l r0 tankBuffer Pressure
@@ -44,10 +44,10 @@ l r1 tankBuffer Temperature
 
 brgt r0 10000 2
 move r2 1 # Enable pumpFuel if buffer pressure < 10MPa
-brgt r1 targetTempAvg 2
-move r2 1 # Enable pumpFuel if buffer temperature < targetTempAvg
 brlt r0 25000 2
 move r2 0 # Disable pumpFuel if buffer pressure > 25MPa
+brgt r1 targetTempAvg 2
+move r2 1 # Enable pumpFuel if buffer temperature < targetTempAvg
 s pumpFuel On r2
 
 j loop
