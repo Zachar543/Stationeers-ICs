@@ -1,0 +1,26 @@
+alias sensor d0
+
+alias timer r15
+
+define timeout_seconds 120
+
+loop:
+sleep 1
+
+brgt timer timeout_seconds 2
+add timer timer 1
+
+l r0 sensor Quantity
+sgtz r0 r0
+breqz r0 2
+move timer 0
+
+s db Setting timer
+slt r0 timer timeout_seconds
+sb 235638270 On r0 # Console
+sb 801677497 On r0 # Console Monitor
+sb -722284333 On r0 # Console Dual
+sb -815193061 On r0 # LED Display (Small)
+sb 555215790 On r0 # Wall Light (Long Wide)
+
+j loop

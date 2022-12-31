@@ -1,9 +1,27 @@
 # Runs a crafter for a specific number of items
+# and turns it off after ~2 minutes of idle time
 alias machine d0
 alias dial d1
 
+alias timeOn r15
+
 loop:
 yield
+
+add timeOn timeOn 1
+l r0 machine On
+seqz r0 r0
+l r1 machine Activate
+or r0 r0 r1
+breqz r0 2
+move timeOn 0
+
+s db Setting timeOn
+
+brlt timeOn 120 2
+s machine On 0
+
+
 
 l r1 dial Setting
 brgtz r1 3
