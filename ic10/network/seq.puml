@@ -1,0 +1,49 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+!pragma layout smetana
+
+entity "A\nID: 1" as A
+entity "B\nID: 2" as B
+
+== A has request for B ==
+note over A: //db// = //bID// (2)\nState = "WaitAck"
+/ note over B: //db// = 0\nState = "Idle"
+note over B: B reads A as part of idle loop
+B --> A: Read Value
+hnote over B: If //value// == //bID// (2)
+B -> A: **ACK**\nWrite 0
+
+hnote over A: Wait for //db// = 0
+
+A -> A: Set //db// to //Data//
+A -> B: Write //Target ID//
+
+hnote over B: Wait for //db// != 0
+B --> B: Read //db//
+B --> A: Read Value
+hnote over A: Wait for //db// = 0 || //db// = -1
+alt Destination Known
+    hnote over B: Enter packet into queue
+    B -> A: Write 0
+else Unknown Device
+    B -> A: Write -1
+end
+
+hnote over B: Change State to "Idle"
+A --> A: Read & Handle Response
+hnote over A: Change State to "Idle"
+
+
+
+
+
+
+newpage
+== A is newly connected to B ==
+note over A: //db// = 0\nState = "Idle"
+/ note over B: //db// = 0\nState = "Idle"
+note over A: A discovers B as part of idle loop
+
+A ->o B: **Introduction Request**\nTarget: bID\nData: aID
+
+@enduml

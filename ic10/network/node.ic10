@@ -1,0 +1,27 @@
+alias router d5
+
+rand r0
+mul r0 r0 1000000
+add r0 r0 1000000
+floor r0 r0
+
+move sp 10000
+push r0
+push 0
+
+s db Setting r0
+
+loop:
+
+jal checkNetwork
+
+yield
+j loop
+
+checkNetwork:
+
+
+
+
+j ra
+

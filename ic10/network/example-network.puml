@@ -1,0 +1,22 @@
+@startuml
+'https://plantuml.com/component-diagram
+!pragma layout smetana
+
+node routerA
+node routerB
+node routerC
+node routerD
+
+component node1
+component node2
+component node3
+
+[routerA] -right- routerB
+[routerB] -right- routerC
+[routerB] -down- routerD
+
+[node1] .. routerA
+[node2] .. routerA
+[node3] .. routerC
+
+@enduml
