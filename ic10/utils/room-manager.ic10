@@ -2,10 +2,10 @@ alias sensor d0
 
 alias timer r15
 
-define timeout_seconds 120
+define timeout_seconds 1
 
 loop:
-sleep 1
+yield
 
 brgt timer timeout_seconds 2
 add timer timer 1
