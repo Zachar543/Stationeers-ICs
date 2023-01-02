@@ -1,0 +1,55 @@
+alias furnace d0
+alias tankOutput d1
+
+alias emptying r14
+alias combusting r15
+
+define auto_ignite_temp 1500
+
+move emptying 0
+
+loop:
+yield
+jal check_combustion
+jal empty_furnace
+jal run_furnace
+s db Setting emptying
+j loop
+
+check_combustion:
+move combusting 0
+l combusting tankOutput Combustion
+l r1 furnace Combustion
+or combusting combusting r1
+l r1 tankOutput Temperature
+sgt r1 r1 auto_ignite_temp
+or combusting combusting r1
+j ra
+
+empty_furnace:
+beqz emptying ra
+s furnace SettingInput 0
+s furnace SettingOutput 100
+l r0 furnace TotalMoles
+bgtz r0 ra
+move emptying 0
+j ra
+
+run_furnace:
+breqz combusting 3
+move emptying 1
+j ra
+bnez emptying ra
+
+# Fill furnace until TotalMoles > 100
+s furnace SettingOutput 0
+
+s furnace Activate 0
+l r1 furnace TotalMoles
+brle r1 100 2
+s furnace Activate 1
+
+slt r0 r1 100
+mul r0 r0 100
+s furnace SettingInput r0
+j ra

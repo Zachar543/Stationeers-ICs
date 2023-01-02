@@ -1,0 +1,46 @@
+alias stopwatch d0
+alias dialOn d1
+alias dialOff d2
+
+alias on r13
+alias timer r14
+alias lastTime r15
+
+move on 0
+move timer 0
+move lastTime 0
+
+loop:
+yield
+
+l r0 stopwatch Time
+brgtz lastTime 2
+move lastTime r0
+
+sub r1 r0 lastTime
+sub timer timer r1
+
+s db Setting timer
+
+jal check_timer
+move lastTime r0
+j loop
+
+check_timer:
+bgtz timer ra
+
+brnez on 5 # Currently Off
+l timer dialOn Setting
+sb -1758710260 On 1
+move on 1
+j done
+
+breqz on 5 # Currently On
+l timer dialOff Setting
+sb -1758710260 On 0
+move on 0
+j done
+
+done:
+mul timer timer 60
+j ra

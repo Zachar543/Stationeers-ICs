@@ -57,13 +57,8 @@ s mixer Setting r1
 j ra
 
 check_output:
-# Ensure input pipes have enough gas at the right temperature to auto-ignite
-# and output is under 25MPa
-l r0 analyzerOutput Pressure
-slt r0 r0 25000
 l r1 analyzerH2 Temperature
-sgt r1 r1 324
-and r0 r0 r1
+sgt r0 r1 324
 l r1 analyzerN2O Temperature
 sgt r1 r1 324
 and r0 r0 r1
@@ -77,6 +72,11 @@ and r0 r0 r1
 l r1 analyzerN2O TotalMoles
 sgt r1 r1 10
 and r0 r0 r1
+# Ensure output is under 25MPa
+l r1 analyzerOutput Pressure
+slt r1 r1 25000
+and r0 r0 r1
+
 s mixer On r0
 
 j ra

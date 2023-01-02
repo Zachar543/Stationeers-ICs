@@ -3,6 +3,10 @@ alias memSelection d1
 alias switchEject d2
 alias tankBuffer d3
 
+define smoothing 0.25
+
+alias lastInput r8
+alias lastOutput r9
 alias inputMult r10
 alias targetTempMin r11
 alias targetTempMax r12
@@ -50,7 +54,7 @@ blt r0 targetPresAvg increase_pressure
 
 increase_pressure:
 sub r1 targetPresAvg r0
-div r1 r1 1000
+div r1 r1 100
 mul r1 r1 r1
 min r1 r1 50
 add r2 r2 r1
@@ -59,14 +63,25 @@ j done
 
 decrease_pressure:
 sub r1 r0 targetPresAvg
-div r1 r1 1000
+div r1 r1 100
 mul r1 r1 r1
 min r1 r1 50
 sub r2 r2 r1
 add r3 r3 r1
 done:
 
+sub r2 r2 lastInput
+mul r2 r2 smoothing
+add r2 lastInput r2
+
+sub r3 r3 lastOutput
+mul r3 r3 smoothing
+add r3 lastOutput r3
+
 s furnace SettingInput r2
 s furnace SettingOutput r3
+
+move lastInput r2
+move lastOutput r3
 
 j loop

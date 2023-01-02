@@ -1,0 +1,47 @@
+alias mixerFuel d0
+alias pumpOutput d1
+alias analyzerOutput d2
+alias tankOutput d3
+alias tankH2 d4
+alias tankO2 d5
+
+alias fuel_available r15
+
+define auto_ignite_temp 1500
+define mixer_max_kpa 10000
+
+loop:
+yield
+jal check_fuel
+jal manage_output
+jal manage_mixer
+s db Setting fuel_available
+j loop
+
+check_fuel:
+l r0 tankH2 TotalMoles
+sgt r0 r0 10
+l r1 tankO2 TotalMoles
+sgt r1 r1 10
+and fuel_available r0 r1
+j ra
+
+manage_output:
+l r0 tankOutput Combustion
+l r1 tankOutput Temperature
+sgt r1 r1 auto_ignite_temp
+or r0 r0 r1
+
+l r1 tankOutput Pressure
+slt r1 r1 mixer_max_kpa
+and r0 r0 r1
+
+s pumpOutput On r0
+j ra
+
+manage_mixer:
+l r1 analyzerOutput Pressure
+slt r0 r1 5000
+and r0 r0 fuel_available
+s mixerFuel On r0
+j ra

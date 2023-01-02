@@ -23,7 +23,7 @@ pop targetTempMin
 
 add targetTempAvg targetTempMin targetTempMax
 div targetTempAvg targetTempAvg 2
-min targetTempAvg targetTempAvg 2000
+min targetTempAvg targetTempAvg 1900
 
 # Manage blowoff valve
 l r0 tankBuffer Pressure
