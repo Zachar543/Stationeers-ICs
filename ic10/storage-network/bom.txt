@@ -1,0 +1,12 @@
+For 9 silos (all outputs from the deep miner except uranium):
+- A 9x2x3 (LxWxH) space
+- 9 SDB Silos
+- 9 sorters
+- 9 stackers
+- 10 ICs (and housings)
+- 2 Memory Chips
+- 117+ Chutes (13 per silo)
+- 198+ Wires (22 per silo)
+Optional:
+- 9 Consoles (item display)
+- 9 LED Displays (quantity display)
