@@ -1,13 +1,13 @@
 alias silo d0
 alias sorter d1
-alias stacker d2
-alias displayQty d3
+#alias stacker d2
+#alias displayQty d3
 alias memRequestHash d4
 alias memRequestQty d5
 
 s sorter Mode 2
 s sorter Output 0
-s stacker Setting 500
+#s stacker Setting 500
 
 loop:
 yield
@@ -15,7 +15,7 @@ s silo Open 0
 jal manage_sorter
 jal manage_export
 l r0 silo Quantity
-s displayQty Setting r0
+#s displayQty Setting r0
 j loop
 
 manage_sorter:

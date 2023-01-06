@@ -1,0 +1,32 @@
+alias memInputHash d0
+alias memInputQty d1
+alias dialItem d2
+alias dialQty d3
+alias button d4
+
+move sp 0
+push 1724793494 # Coal Ore
+push -983091249 # Cobalt Ore
+push -707307845 # Copper Ore
+push -1348105509 # Gold Ore
+push 1758427767 # Iron Ore
+push -190236170 # Lead Ore
+push 1830218956 # Nickel Ore
+push 1103972403 # Silicon Ore
+push -916518678 # Silver Ore
+
+loop:
+yield
+
+l r0 dialItem Setting
+add sp r0 1
+pop r0
+s db Setting r0
+
+l r1 button Setting
+breqz r1 4
+s memInputHash Setting r0
+l r1 dialQty Setting
+s memInputQty Setting r1
+
+j loop
