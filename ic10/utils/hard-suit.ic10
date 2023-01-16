@@ -1,0 +1,13 @@
+alias suit db
+alias helmet d0
+alias jetpack d1
+
+loop:
+yield
+
+l r0 helmet Open
+seqz r0 r0
+s suit Filtration r0
+s suit AirRelease r0
+s suit On r0
+j loop
