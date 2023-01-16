@@ -1,0 +1,31 @@
+- Kit (Automated Rocket Silo Module)
+  - 10 Steel Sheets
+  - 10 Plastic Sheets
+  - 5 Electronic Parts
+- Kit (Automated Rocket Ice Mining Module)
+  - 10 Steel Sheets
+  - 10 Plastic Sheets
+  - 10 Electronic Parts
+- Kit (Automated Rocket Coupling Module)
+- Kit (Modular Rocket Engine)
+  - 16 Steel Sheets
+  - 12 Plastic Sheets
+  - 10 Electronic Parts
+- Kit (Module Rocket Fueltank) Tank
+  - 4 Kit (Tank)
+  - 25 Steel Sheets
+  - 12 Electronic Parts
+- Kit (Automated Rocket Automation Module)
+  - 25 Steel Sheets
+  - 25 Plastic Sheets
+  - 20 Electronic Parts
+- Kit (Launch Pad)
+  - 20 Steel Sheets
+  - 8 Electronic Parts
+
+
+Total of Extras:
+- 4 Kit (Tank)
+- 106 Steel Sheets
+- 57 Plastic Sheets
+- 65 Electronic Parts

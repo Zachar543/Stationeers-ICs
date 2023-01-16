@@ -1,0 +1,93 @@
+alias rocketHead d0
+alias rocketSilo d1
+alias rocketMiner d2
+alias pumpFuel d3
+alias diodeSlide d4
+
+loop:
+yield
+s rocketHead Activate 0
+jal check_fuel
+jal check_silo
+jal start_moving
+jal stop_moving
+jal mine
+jal launch
+jal refuel
+l r0 rocketHead Mode
+s db Setting r0
+l r0 rocketSilo Quantity
+l r1 rocketSilo Maximum
+div r0 r0 r1
+s diodeSlide Setting r0
+j loop
+
+check_fuel:
+# If rocket is in either mode 4 and has less than 1.1x the needed fuel left
+l r0 rocketHead Mode
+bne r0 4 ra
+
+l r0 rocketHead Fuel
+l r1 rocketHead ReturnFuelCost
+mul r1 r1 1.1
+bgt r0 r1 ra
+
+s rocketHead Activate 5 # RTB
+j loop
+
+start_moving:
+# Move if idle in space and nothing is available to mine
+l r0 rocketHead Mode
+bne r0 4 ra
+l r0 rocketHead CollectableGoods
+bnez r0 ra
+s rocketHead Activate 2
+j ra
+
+stop_moving:
+# Stop moving if moving in space and something is available to mine
+l r0 rocketHead Mode
+bne r0 2 ra
+l r0 rocketHead CollectableGoods
+beqz r0 ra
+s rocketHead Activate 4
+j ra
+
+mine:
+# Mine if Mode is 4 and ores are available
+l r0 rocketHead Mode
+bne r0 4 ra
+l r0 rocketHead CollectableGoods
+beqz r0 ra
+s rocketMiner Activate 1
+j ra
+
+check_silo:
+l r0 rocketHead Mode
+bne r0 4 ra
+l r0 rocketSilo Quantity
+l r1 rocketSilo Maximum
+blt r0 r1 ra
+s rocketHead Activate 5
+j ra
+
+launch:
+l r0 rocketHead Mode
+bne r0 0 ra
+s rocketSilo Open 1
+l r0 rocketHead Fuel
+blt r0 10000 ra
+l r0 rocketSilo Quantity
+bgtz r0 ra
+s rocketSilo Open 0
+s rocketHead Activate 1
+j ra
+
+refuel:
+l r0 rocketHead Mode
+seq r0 r0 0
+l r1 rocketHead Fuel
+slt r1 r1 10000
+and r0 r0 r1
+s pumpFuel On r0
+j ra
