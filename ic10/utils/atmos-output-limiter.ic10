@@ -1,0 +1,10 @@
+alias self db
+
+loop:
+yield
+l r0 self PressureOutput 
+brlt r0 30000 2
+s self Mode 0
+brgt r0 20000 2
+s self Mode 1
+j loop

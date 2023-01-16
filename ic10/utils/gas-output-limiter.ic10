@@ -1,0 +1,11 @@
+alias analyzer d0
+alias pump d1
+
+loop:
+yield
+l r0 analyzer Pressure
+brlt r0 30000 2
+s pump On 0
+brgt r0 20000 2
+s pump On 1
+j loop
