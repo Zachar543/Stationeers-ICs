@@ -1,0 +1,68 @@
+alias pumpInput d0
+alias pumpOutput d1
+alias analyzerCollector d2
+alias analyzerOutput d3
+alias memMoles d4
+
+alias mode r15
+move mode 0
+
+define MODE_FILL 0
+define MODE_MEASURE 1
+define MODE_DRAIN 2
+
+loop:
+yield
+jal fill
+jal measure
+jal drain
+s db Setting mode
+j loop
+
+fill:
+bne mode MODE_FILL ra
+s pumpInput On 1
+s pumpOutput On 0
+
+# Wait for Pressure > 10MPa OR TotalMoles > 100
+l r0 analyzerCollector Pressure
+sgt r0 r0 10000
+l r1 analyzerCollector TotalMoles
+sgt r1 r1 100
+or r0 r0 r1
+beqz r0 ra
+
+move mode MODE_MEASURE
+j ra
+
+measure:
+bne mode MODE_MEASURE ra
+s pumpInput On 0
+s pumpOutput On 0
+
+l r0 analyzerCollector TotalMoles
+l r1 memMoles Setting
+add r0 r0 r1
+s memMoles Setting r0
+
+move mode MODE_DRAIN
+j ra
+
+drain:
+bne mode MODE_DRAIN ra
+
+l r0 analyzerOutput Pressure
+brlt r0 10000 4
+s pumpInput On 0
+s pumpOutput On 0
+j ra
+
+s pumpInput On 0
+s pumpOutput On 1
+
+# Wait for a vacuum
+l r0 analyzerCollector TotalMoles
+bgtz r0 ra
+
+move mode MODE_FILL
+j ra
