@@ -37,8 +37,9 @@ wait_for_request:
 l r0 memRequestHash Setting
 beqz r0 ra
 l r0 memRequestQty Setting
-brnez r0 3
+brgtz r0 4
 s memRequestHash Setting 0
+s memRequestQty Setting 0
 j ra
 
 sub requestTimout requestTimout 1
