@@ -1,0 +1,8 @@
+alias machine db
+alias display d0
+
+loop:
+yield
+ls r0 machine 0 Quantity
+s display Setting r0
+j loop
