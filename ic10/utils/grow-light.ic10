@@ -15,7 +15,9 @@ yield
 
 l r0 stopwatch Time
 brgtz lastTime 2
-move lastTime r0
+move lastTime r0 # Initial sync with stopwatch
+brle lastTime r0 2
+move lastTime r0 # If lastTime > stopwatch
 
 sub r1 r0 lastTime
 sub timer timer r1
