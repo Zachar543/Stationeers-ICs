@@ -4,13 +4,13 @@ define PRES_MIN 60
 define PRES_MAX 150
 alias suit db
 alias helmet d0
+alias notificationTime r9
 alias prevStormMinutes r10
 alias tempLow r11
 alias tempHigh r12
 alias presLow r13
 alias presHigh r14
 alias atmosGood r15
-
 clr db # clear stack
 
 start:
@@ -20,6 +20,7 @@ jal handleBadAtmos
 jal handleGoodAtmos
 jal checkStorm
 jal handleNotifications
+jal handleSoundAlertClear
 j start
 
 checkAtmos:
@@ -36,7 +37,6 @@ or r0 r0 tempLow
 or r0 r0 tempHigh
 seqz atmosGood r0
 j ra
-
 handleBadAtmos:
 bnez atmosGood ra
 s suit On 1
@@ -45,16 +45,19 @@ s suit Filtration 1
 l r0 helmet Open
 beqz r0 ra
 s helmet Open 0
-breqz presLow 2
+breqz presLow 3
 push Sound.PressureLow
-breqz presHigh 2
+push 6
+breqz presHigh 3
 push Sound.PressureHigh
-breqz tempLow 2
+push 6
+breqz tempLow 3
 push Sound.TemperatureLow
-breqz tempHigh 2
+push 6
+breqz tempHigh 3
 push Sound.TemperatureHigh
+push 6
 j ra
-
 handleGoodAtmos:
 beqz atmosGood ra
 s suit On 0
@@ -67,27 +70,39 @@ checkStorm:
 move r1 prevStormMinutes # Save off old for later
 l r0 suit Setting
 div r0 r0 60
-floor r0 r0
+ceil r0 r0
 move prevStormMinutes r0 # Update prev storm time
 beq r0 r1 ra # Only notify once per minute
-brne r0 5 2
+brne r0 5 3
 push Sound.Five
-brne r0 4 2
+push 1
+brne r0 4 3
 push Sound.Four
-brne r0 3 2
+push 1
+brne r0 3 3
 push Sound.Three
-brne r0 2 2
+push 1
+brne r0 2 3
 push Sound.Two
-brne r0 1 2
+push 1
+brne r0 1 3
 push Sound.One
+push 1
 push Sound.StormIncoming
+push 4
 j ra
 
 handleNotifications:
-blez sp ra
-s suit SoundAlert Sound.None
+blez sp ra # Queue non-empty
+bgtz notificationTime ra # Sound playing
+pop notificationTime
 pop r0
 s suit SoundAlert r0
-sleep 2
+j ra
+handleSoundAlertClear:
+brlez notificationTime 3
+sub notificationTime notificationTime 1
+j ra
+s suit SoundAlert Sound.None
 j ra
 

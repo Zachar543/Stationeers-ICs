@@ -2,32 +2,36 @@ alias weatherStation d0
 alias speaker d1
 alias light d2
 alias transmitter d3
+alias stormMinutes r14
+alias prevStormMinutes r15
 
 start:
 sleep 1
-
-#s speaker On 1
-
-l r0 weatherStation Mode
-seq r0 r0 1
-
-l r1 weatherStation NextWeatherEventTime
-mod r2 r1 60
-snez r2 r2
-
-and r0 r0 r2
-
-s speaker On r0
-
-l r1 weatherStation NextWeatherEventTime
-s db Setting r1
-s transmitter Setting r1
-
-l r0 weatherStation Mode
-
-snez r0 r0
-slt r1 r1 120
-and r2 r0 r1
-s light On r2
-
+l stormMinutes weatherStation NextWeatherEventTime
+div stormMinutes stormMinutes 60
+ceil stormMinutes stormMinutes
+jal notifyStorm
+jal updateTransmitter
+jal updateLight
+move prevStormMinutes stormMinutes
 j start
+
+notifyStorm:
+beqz stormMinutes ra
+beq stormMinutes prevStormMinutes ra # Only notify once per minute
+s speaker On 1
+sleep 2
+s speaker On 0
+j ra
+
+updateTransmitter:
+l r0 weatherStation NextWeatherEventTime
+s transmitter Setting r0
+j ra
+
+updateLight:
+sgtz r0 stormMinutes
+sle r1 stormMinutes 2
+and r0 r0 r1
+s light On r0
+j ra
