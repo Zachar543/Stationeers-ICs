@@ -1,0 +1,13 @@
+alias daySensor d0
+
+start:
+sleep 1
+
+l r0 daySensor SolarAngle
+sub r0 180 r0
+
+sgt r2 r0 80
+sb HASH("StructureGrowLight") On r2
+sb HASH("StructureHydroponicsStation") On r2
+
+j start
