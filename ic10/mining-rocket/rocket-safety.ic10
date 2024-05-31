@@ -1,0 +1,36 @@
+alias memDoNotLaunch d0
+alias apc d1
+alias outputTank1 d2
+alias outputTank2 d2
+alias outputTank3 d2
+
+alias finalValue r15
+
+define MAX_PRESSURE 10000
+
+loop:
+yield
+move finalValue 0
+jal check_power
+jal check_tanks
+s memDoNotLaunch Setting finalValue
+j loop
+
+check_power:
+l r0 apc Mode
+bne r0 2 ra # Discharging
+move finalValue 1
+j ra
+
+check_tanks:
+l r0 outputTank1 Pressure
+sgt r0 r0 MAX_PRESSURE
+l r1 outputTank2 Pressure
+sgt r1 r1 MAX_PRESSURE
+l r2 outputTank3 Pressure
+sgt r2 r2 MAX_PRESSURE
+or r0 r0 r1
+or r0 r0 r2
+beqz r0 ra
+move finalValue 1
+j ra

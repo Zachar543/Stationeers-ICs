@@ -1,0 +1,97 @@
+alias silo d0
+alias chuteFlipFlop d1
+alias chuteValve d2
+alias stacker d3
+alias memRequestHash d4
+alias memRequestQty d5
+
+alias flipFlopMode r14
+alias waitingForFlipFlop r15
+move waitingForFlipFlop 0
+
+s chuteFlipFlop On 1
+s chuteFlipFlop Mode 0 # Output Straight
+s chuteFlipFlop Setting 0
+s chuteFlipFlop Quantity 0
+s chuteValve On 1
+s chuteValve Open 0
+s chuteValve Setting 1 # Close Threshold
+s stacker ClearMemory 1
+
+loop:
+yield
+s silo Open 0
+s chuteFlipFlop Quantity 0
+#s chuteFlipFlop Mode flipFlopMode
+jal manage_chutes
+jal manage_export
+l r0 silo Quantity
+#s displayQty Setting r0
+
+jal check_hold
+#l r0 chuteFlipFlop Quantity
+#breqz r0 3
+#l r0 chuteFlipFlop Mode 0
+#l r0 chuteFlipFlop Setting 0
+
+j loop
+
+check_hold:
+blez waitingForFlipFlop ra
+s chuteFlipFlop Quantity 0
+
+ls r0 chuteFlipFlop 0 Occupied
+bnez r0 ra
+
+l r0 stacker ImportCount
+beqz r0 ra
+s stacker ClearMemory 1
+
+sub waitingForFlipFlop waitingForFlipFlop 1
+
+j ra
+
+manage_chutes:
+ls r1 chuteValve 0 Occupied
+beqz r1 ra
+
+l r0 db Setting
+ls r1 chuteValve 0 OccupantHash
+brnez r0 3
+s db Setting r1
+move r0 r1
+
+# Item in sorter equals silo items
+seq r1 r1 r0
+
+# Silo is not full
+l r2 silo Quantity
+slt r2 r2 600
+and r1 r1 r2
+
+bgtz waitingForFlipFlop ra
+
+s chuteFlipFlop Quantity 0
+move flipFlopMode r1
+s chuteFlipFlop Mode r1
+s chuteValve Open 1
+breqz r1 2
+add waitingForFlipFlop waitingForFlipFlop 1
+j ra
+
+manage_export:
+l r0 db Setting
+l r1 memRequestHash Setting
+bne r0 r1 ra # Return if requested item is not in this silo
+l r0 silo Quantity
+blez r0 ra # Return if silo is empty
+
+l r0 memRequestQty Setting
+l r1 silo ExportCount
+sub r0 r0 r1
+s memRequestQty Setting r0
+s silo ClearMemory 1
+blez r0 ra # Return if requested is zero
+
+s silo Open 1
+j ra

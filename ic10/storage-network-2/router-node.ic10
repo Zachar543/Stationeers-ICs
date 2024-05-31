@@ -1,0 +1,11 @@
+alias sorter d0
+alias memInput d1
+alias memOutput1 d2
+alias memOutput2 d3
+
+loop:
+yield
+
+
+
+j loop

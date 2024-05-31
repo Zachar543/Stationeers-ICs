@@ -1,0 +1,44 @@
+alias mixer d0
+alias analyzerInputOxy d1
+alias analyzerInputVol d2
+alias analyzerOutput d3
+
+alias shouldRun r15
+
+define MIN_INPUT_MOLES 100
+define MAX_OUTPUT_PRES 1000
+
+loop:
+yield
+move shouldRun 1
+jal check_inputs
+jal check_output
+jal update_ratio
+s mixer On shouldRun
+j loop
+
+check_inputs:
+l r0 analyzerInputOxy TotalMoles
+sgt r0 r0 MIN_INPUT_MOLES
+l r1 analyzerInputVol TotalMoles
+sgt r1 r1 MIN_INPUT_MOLES
+and r0 r0 r1
+move shouldRun r0
+j ra
+
+check_output:
+l r0 analyzerOutput Pressure
+blt r0 MAX_OUTPUT_PRES ra
+move shouldRun 0
+j ra
+
+update_ratio:
+# Setting = 100/(1+(oxyTemp/(2*volTemp))
+l r1 analyzerInputVol Temperature
+mul r0 r1 2
+l r1 analyzerInputOxy Temperature
+div r0 r1 r0
+add r0 1 r0
+div r0 100 r0
+s mixer Setting r0
+j ra

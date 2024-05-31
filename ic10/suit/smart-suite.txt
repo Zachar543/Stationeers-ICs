@@ -1,0 +1,93 @@
+define TEMP_MIN 273
+define TEMP_MAX 312
+define PRES_MIN 60
+define PRES_MAX 150
+alias suit db
+alias helmet d0
+alias prevStormMinutes r10
+alias tempLow r11
+alias tempHigh r12
+alias presLow r13
+alias presHigh r14
+alias atmosGood r15
+
+clr db # clear stack
+
+start:
+yield
+jal checkAtmos
+jal handleBadAtmos
+jal handleGoodAtmos
+jal checkStorm
+jal handleNotifications
+j start
+
+checkAtmos:
+l r0 suit PressureExternal
+slt presLow r0 PRES_MIN
+sgt presHigh r0 PRES_MAX
+l r0 suit TemperatureExternal
+slt tempLow r0 TEMP_MIN
+sgt tempHigh r0 TEMP_MAX
+move r0 0
+or r0 r0 presLow
+or r0 r0 presHigh
+or r0 r0 tempLow
+or r0 r0 tempHigh
+seqz atmosGood r0
+j ra
+
+handleBadAtmos:
+bnez atmosGood ra
+s suit On 1
+s suit AirRelease 1
+s suit Filtration 1
+l r0 helmet Open
+beqz r0 ra
+s helmet Open 0
+breqz presLow 2
+push Sound.PressureLow
+breqz presHigh 2
+push Sound.PressureHigh
+breqz tempLow 2
+push Sound.TemperatureLow
+breqz tempHigh 2
+push Sound.TemperatureHigh
+j ra
+
+handleGoodAtmos:
+beqz atmosGood ra
+s suit On 0
+s suit AirRelease 0
+s suit Filtration 0
+s helmet Open 1
+j ra
+
+checkStorm:
+move r1 prevStormMinutes # Save off old for later
+l r0 suit Setting
+div r0 r0 60
+floor r0 r0
+move prevStormMinutes r0 # Update prev storm time
+beq r0 r1 ra # Only notify once per minute
+brne r0 5 2
+push Sound.Five
+brne r0 4 2
+push Sound.Four
+brne r0 3 2
+push Sound.Three
+brne r0 2 2
+push Sound.Two
+brne r0 1 2
+push Sound.One
+push Sound.StormIncoming
+j ra
+
+handleNotifications:
+blez sp ra
+s suit SoundAlert Sound.None
+pop r0
+s suit SoundAlert r0
+sleep 2
+j ra
+

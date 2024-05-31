@@ -1,0 +1,46 @@
+alias silo d0
+alias valve d1
+alias memReq d2
+
+alias qtyOrig r14
+alias sending r15
+
+s silo Open 1
+s valve Setting 1
+s valve Open 0
+move sending 0
+
+loop:
+yield
+jal check_cancel
+jal check_sending
+jal check_new_req
+j loop
+
+check_cancel:
+beqz sending ra
+l r0 memReq Setting
+bgtz r0 ra
+s valve Open 0
+move sending 0
+j ra
+
+check_new_req:
+bnez sending ra
+l r0 memReq Setting
+blez r0 ra
+move qtyOrig r0
+move sending 1
+s valve Setting qtyOrig
+s valve Open 1
+j ra
+
+check_sending:
+beqz sending ra
+l r0 valve Open
+bnez r0 ra
+l r0 memReq Setting
+sub r0 r0 qtyOrig
+s memReq Setting r0
+move sending 0
+j ra

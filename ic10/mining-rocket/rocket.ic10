@@ -3,10 +3,12 @@ alias rocketSilo d1
 alias rocketMiner d2
 alias pumpFuel d3
 alias diodeSlide d4
+alias memDoNotLaunch d5
 
 loop:
 yield
 s rocketHead Activate 0
+#jal check_rtb
 jal check_fuel
 jal check_silo
 jal start_moving
@@ -21,6 +23,14 @@ l r1 rocketSilo Maximum
 div r0 r0 r1
 s diodeSlide Setting r0
 j loop
+
+#check_rtb:
+#l r0 memDoNotLaunch Setting
+#beqz r0 ra
+#l r0 rocketHead Mode
+#beq r0 0 ra
+#s rocketHead Activate 5 # RTB
+#j loop
 
 check_fuel:
 # If rocket is in either mode 4 and has less than 1.1x the needed fuel left
@@ -72,6 +82,8 @@ s rocketHead Activate 5
 j ra
 
 launch:
+l r0 memDoNotLaunch Setting
+bnez r0 ra
 l r0 rocketHead Mode
 bne r0 0 ra
 s rocketSilo Open 1

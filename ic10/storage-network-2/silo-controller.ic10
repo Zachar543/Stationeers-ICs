@@ -1,0 +1,38 @@
+alias silo d0
+alias valve d1
+alias memReq d2
+
+alias qtyReq r14
+alias waiting r15
+
+s silo Open 0
+s valve Setting 1
+s valve Open 0
+move waiting 0
+
+loop:
+yield
+l qtyReq memReq Setting
+blez qtyReq loop
+
+jal check_silo
+jal check_valve
+j loop
+
+check_silo:
+s silo Open 0
+bnez waiting ra
+s silo Open 1
+s silo Open 0
+move waiting 1
+j ra
+
+check_valve:
+beqz waiting ra
+ls r0 valve 0 Occupied
+beqz r0 ra
+s valve Open 1
+move waiting 0
+sub qtyReq qtyReq 1
+s memReq Setting qtyReq
+j ra

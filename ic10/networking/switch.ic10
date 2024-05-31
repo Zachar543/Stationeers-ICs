@@ -1,6 +1,6 @@
-alias targetA db
-alias targetB db
+alias port db
 
+alias numValues r9
 alias srcPort r10
 alias dstPort r11
 alias srcMAC r12
@@ -8,15 +8,10 @@ alias dstMAC r13
 alias valueA r14
 alias valueB r15
 
-move srcPort 0
-move dstPort 0
-move srcMAC 0
-move dstMAC 0
-move valueA 0
-move valueB 0
-
 loop:
 yield
+
+move dstPort 0
 
 move dstPort 0
 move srcPort 1
@@ -45,34 +40,41 @@ jal send
 j flood_next
 
 read:
-l r0 targetA Setting
+l r0 portIn Setting
 beqz r0 ra
-move valueA r0
+move numValues
+move sp 300
+
 s db Setting valueA
-l valueB targetB Setting
-s targetA Setting 0
-s targetB Setting 0
+l valueB portOut Setting
+s portIn Setting 0
+s portOut Setting 0
 and srcMAC valueA $FF
 and dstMAC valueA $FF00
 srl dstMAC dstMAC 8
 j ra
 
 send:
-s targetA Setting valueA
-s targetB Setting valueB
+s portIn Setting valueA
+s portOut Setting valueB
 j ra
 
 setPortAliases:
 blez r0 ra # Return if port=0
 brne r0 1 3
-alias targetA d0
-alias targetB d1
+alias portIn d0
+alias portOut d1
 brne r0 2 3
-alias targetA d2
-alias targetB d3
+alias portIn d2
+alias portOut d3
 brne r0 3 3
-alias targetA d4
-alias targetB d5
+alias portIn d4
+alias portOut d5
+j ra
+
+waitIdle:
+l r0 port Setting
+bnez r0 waitIdle
 j ra
 
 saveMAC:
@@ -85,3 +87,4 @@ move sp dstMAC
 add sp sp 1
 peek dstPort
 j ra
+

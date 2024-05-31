@@ -1,0 +1,93 @@
+alias port db
+alias portNum r10
+
+alias numValues r9
+alias srcPort r10
+alias dstPort r11
+
+alias srcMAC r12
+alias dstMAC r13
+alias header r14
+
+s d0 Setting nan
+s d1 Setting nan
+s d2 Setting nan
+s d3 Setting nan
+s d4 Setting nan
+s d5 Setting nan
+
+loop:
+yield
+
+read_next_port:
+
+move portNum 1
+alias port d0
+jal read
+beqz numValues read_next_port
+
+move sp 301
+peek header # Read MAC tag from stack
+add srcMAC header $FF
+add dstMAC header $FF00
+srl dstMAC dstMAC 8
+
+jal saveMAC
+jal lookupMAC
+#beqz dstPort flood # Flood if dstMAC is unknown
+jal send
+
+j loop
+
+
+
+read:
+move numValues 0
+move sp 300
+read_next:
+l r0 port Setting
+beq r0 ninf read_next # Wait for next value
+s port Setting ninf
+bnan r0 ra # Return on end-of-stream
+add numValues numValues 1
+push r0
+j read_next
+
+
+
+send:
+move sp 300
+
+send_wait_start:
+l r1 port Setting
+brnan r1 2 # Wait for idle before starting
+j send_wait_start
+
+send_next:
+add sp sp 1
+peek r0
+s port Setting r0 # Send value
+
+send_wait_read:
+l r0 port Setting
+bne r0 ninf send_wait_read # Wait for Idle
+
+sub numValues numValues 1
+bgtz numValues send_next
+s port Setting nan # Send end-of-stream
+j ra
+
+
+
+saveMAC:
+move sp srcMAC
+push portNum
+j ra
+
+
+
+lookupMAC:
+move sp dstMAC
+add sp sp 1
+peek portNum
+j ra

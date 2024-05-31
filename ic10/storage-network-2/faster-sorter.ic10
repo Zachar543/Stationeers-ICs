@@ -1,0 +1,38 @@
+alias sorter d0
+alias valve d1
+alias mem d2
+
+alias item r14
+alias mode r15
+
+s sorter Mode 0
+s sorter Setting 0
+s valve Setting 1
+s valve Open 0
+
+loop:
+l item mem Setting
+jal check_filter
+jal check_valve
+yield
+j loop
+
+check_valve:
+bnez mode ra
+ls r0 valve 0 OccupantHash
+beqz r0 ra
+seq r0 r0 item
+s sorter Mode r0
+s sorter Quantity 1
+s valve Open 1
+move mode 1
+j ra
+
+check_filter:
+beqz mode ra
+ls r0 sorter 0 Occupied
+bnez r0 ra
+l r0 sorter Quantity
+beq r0 1 ra
+move mode 0
+j ra
